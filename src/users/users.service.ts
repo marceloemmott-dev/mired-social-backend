@@ -32,9 +32,9 @@ export class UsersService {
       // 3. Guardar en Base de Datos
       await this.userRepository.save(user);
 
-      // 4. Retornar usuario SIN password (limpieza manual o usando interceptor, aquí manual por simplicidad)
-      delete user.password;
-      return user;
+      // 4. Retornar usuario SIN password (usando desestructuración)
+      const { password: _, ...result } = user;
+      return result;
     } catch (error) {
       this.handleDBErrors(error);
     }

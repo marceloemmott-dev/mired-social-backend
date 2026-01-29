@@ -5,6 +5,8 @@
 ![Neon](https://img.shields.io/badge/Neon-00E599?style=for-the-badge&logo=neon&logoColor=black)
 ![AWS](https://img.shields.io/badge/AWS_S3-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
 ![TypeORM](https://img.shields.io/badge/TypeORM-FE0C05?style=for-the-badge&logo=typeorm&logoColor=white)
+![Resend](https://img.shields.io/badge/Resend-Email-black?style=for-the-badge&logo=resend&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-Docs-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
 
 > **Mired Social** es una iniciativa ambiciosa para construir una plataforma social de última generación. Este repositorio aloja el **Backend Core**, diseñado para servir como cerebro centralizado tanto para aplicaciones Web como Móviles.
 
@@ -14,27 +16,24 @@
 
 1. [Visión y Alcance](#-visión-y-alcance)
 2. [Arquitectura del Sistema](#-arquitectura-del-sistema)
-3. [Tech Stack](#-tech-stack-las-herramientas-del-poder)
-4. [Bitácora de Progreso](#-progreso-y-bitácora)
-5. [Roadmap](#-roadmap-próximos-pasos)
-6. [Guía de Replicación (Setup)](#-guía-de-replicación-setup)
+3. [Flujos de Autenticación](#-flujos-de-autenticación)
+4. [Tech Stack](#-tech-stack)
+5. [Bitácora de Progreso](#-progreso-y-bitácora)
+6. [Roadmap](#-roadmap-próximos-pasos)
+7. [Guía de Replicación (Setup)](#-guía-de-replicación-setup)
 
 ---
 
 ## 🚀 Visión y Alcance
 
 Nuestro objetivo no es solo otra app social, sino un ecosistema completo y escalable.
-- **Multi-Plataforma:** El backend está diseñado agnóstico al cliente, listo para alimentar:
-  - 🖥️ **Frontend Web:** Una experiencia inmersiva y rica en escritorio.
-  - 📱 **App Móvil:** Una aplicación nativa rápida y fluida.
-- **Escalabilidad Cloud:** Infraestructura 100% en la nube para crecer sin límites.
-- **Experiencia Premium:** Enfoque en performance y diseño visual.
+- **Multi-Plataforma:** Backend diseñado para clientes Web y Móviles.
+- **Escalabilidad Cloud:** Infraestructura Serverless.
+- **Experiencia Premium:** Enfoque en performance y seguridad.
 
 ---
 
 ## 📐 Arquitectura del Sistema
-
-El siguiente diagrama ilustra el flujo de datos y la integración de servicios en la nube:
 
 ```mermaid
 graph TD
@@ -49,19 +48,43 @@ graph TD
         %% Servicios Externos
         DB[(🐘 Neon PostgreSQL)]
         Storage[📦 AWS S3 Media]
+        Email[📧 Resend Service]
     end
 
     %% Conexiones
-    ClientWeb <-->|REST / Socket.io| API
-    ClientMobile <-->|REST / Socket.io| API
+    ClientWeb <-->|REST| API
+    ClientMobile <-->|REST| API
     
     API <-->|TypeORM SSL| DB
     API <-->|AWS SDK| Storage
+    API -->|API Key| Email
 
     %% Estilos
     style API fill:#E0234E,stroke:#333,stroke-width:2px,color:white
     style DB fill:#00E599,stroke:#333,stroke-width:2px,color:black
-    style Storage fill:#232F3E,stroke:#333,stroke-width:2px,color:white
+    style Email fill:#000,stroke:#333,stroke-width:2px,color:white
+```
+
+---
+
+## 🔐 Flujos de Autenticación
+
+El sistema implementa un ciclo de vida completo de identidad con notificaciones por correo:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant API as NestJS API
+    participant DB as Neon DB
+    participant Mail as Resend
+
+    User->>API: POST /auth/register
+    API->>API: Hash Password (Bcrypt)
+    API->>DB: Save User
+    DB-->>API: User Created
+    API->>Mail: Send Welcome Email
+    Mail-->>User: 📧 "Bienvenido a Mired!"
+    API-->>User: 201 Created (User Data)
 ```
 
 ---
@@ -71,15 +94,17 @@ graph TD
 Hemos seleccionado las mejores tecnologías modernas para cada capa de la aplicación:
 
 ### 🧠 Core & Lógica
-*   **NestJS**: Framework progresivo de Node.js, elegido por su arquitectura modular.
-*   **TypeORM**: Para una gestión de datos elegante y tipada.
+*   **NestJS**: Framework progresivo y modular.
+*   **TypeORM**: ORM potente para TypeScript.
 
 ### 💾 Datos & Almacenamiento
-*   **Neon (PostgreSQL Serverless)**: Base de datos principal. Nos permite escalar a cero y manejar picos de tráfico.
-*   **AWS S3 (Planned)**: Almacenamiento de objetos robusto para gestionar multimedia.
+*   **Neon (PostgreSQL Serverless)**: Base de datos auto-escalable.
+*   **Resend**: Plataforma moderna de correos transaccionales.
 
 ### 🛡️ Seguridad
-*   **JWT & Passport**: Estándar de la industria para autenticación.
+*   **Bcrypt**: Hashing de contraseñas robusto.
+*   **Passport & JWT**: Autenticación segura.
+*   **Class Validator**: Validación estricta de DTOs.
 
 ---
 
@@ -87,31 +112,31 @@ Hemos seleccionado las mejores tecnologías modernas para cada capa de la aplica
 
 ### ✅ FASE 1: Inicialización e Infraestructura (COMPLETADO)
 *Enero 2026*
+- **Infraestructura**: Configuración de NestJS, Neon DB y TypeORM con SSL.
+- **Documentación**: Implementación de Swagger (`/api`) y Arquitectura.
 
-Hemos establecido los cimientos inmutables del proyecto.
-- **Core Framework**: Inicialización del proyecto con NestJS.
-- **Base de Datos Cloud**: Aprovisionamiento de base de datos PostgreSQL en **Neon Tech**.
-- **Gestión de Configuración**: Implementación de `@nestjs/config`.
-- **Validación**: Conexión exitosa verificada.
+### ✅ FASE 2: Identidad y Acceso (COMPLETADO)
+*Enero 2026*
+- **Users Resource**: Entidad `User` con UUID y roles.
+- **Auth Module**: Endpoint `/auth/register` funcional.
+- **Seguridad**: Hasheo de passwords y DTOs validados.
+- **Email System**: Integración con **Resend** para correos de bienvenida.
 
 ---
 
 ## 🔮 Roadmap (Próximos Pasos)
 
-### 🔜 FASE 2: Identidad y Acceso (En Progreso)
-- [x] Diseño de la Entidad `User`.
-- [x] Sistema de Registro (Sign Up) con Hash de Contraseña.
-- [ ] Inicio de Sesión (Login) y JWT.
+### 🔜 FASE 3: Gestión de Acceso
+- Login con JWT.
+- Recuperación de Contraseña (Forgot Password Flow).
 
-### 🗓️ FASE 3: Media & AWS
-- Integración con AWS SDK.
-- Servicio de subida de avatares.
+### 🗓️ FASE 4: Core Social
+- Feed, Publicaciones y Likes.
+- Comentarios y Seguidores.
 
 ---
 
 ## 🛠️ Guía de Replicación (Setup)
-
-Si deseas levantar este proyecto en tu máquina local, sigue estos pasos:
 
 ### 1. Clonar y Preparar
 ```bash
@@ -120,30 +145,17 @@ cd mired-social-backend
 npm install
 ```
 
-### 2. Configurar Base de Datos (Neon)
-Este proyecto requiere una base de datos PostgreSQL. Recomendamos usar **Neon** por su facilidad y capa gratuita.
-
-1.  Ve a [neon.tech](https://neon.tech) y regístrate.
-2.  Crea un nuevo proyecto.
-3.  En el Dashboard, copia la **Connection String** (asegúrate de que tenga `sslmode=require`).
-
-### 3. Variables de Entorno
-Crea un archivo `.env` en la raíz del proyecto (basado en el `.env.example` incluido):
-
+### 2. Configurar Entorno (.env)
+Copia el ejemplo y añade tus claves de **Neon** y **Resend**:
 ```bash
 cp .env.example .env
 ```
 
-Abre el `.env` y pega tu conexión de Neon:
-```ini
-DATABASE_URL="postgresql://tu_usuario:password@ep-cool.aws.neon.tech/neondb?sslmode=require"
-```
-
-### 4. Ejecutar
+### 3. Ejecutar
 ```bash
 npm run start:dev
 ```
-¡Listo! El backend estará corriendo en `http://localhost:3000`.
+Accede a la documentación en: `http://localhost:3000/api`
 
 ---
 **Creado por Marcelo** 🚀
