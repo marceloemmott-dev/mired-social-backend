@@ -17,15 +17,17 @@
 3. [Tech Stack](#-tech-stack-las-herramientas-del-poder)
 4. [Bitácora de Progreso](#-progreso-y-bitácora)
 5. [Roadmap](#-roadmap-próximos-pasos)
-6. [Instalación](#-instalación-y-ejecución)
+6. [Guía de Replicación (Setup)](#-guía-de-replicación-setup)
 
 ---
 
 ## 🚀 Visión y Alcance
 
 Nuestro objetivo no es solo otra app social, sino un ecosistema completo y escalable.
-- **Multi-Plataforma:** El backend está diseñado agnóstico al cliente, listo para alimentar clientes Web y Móviles.
-- **Escalabilidad Cloud:** Infraestructura 100% en la nube.
+- **Multi-Plataforma:** El backend está diseñado agnóstico al cliente, listo para alimentar:
+  - 🖥️ **Frontend Web:** Una experiencia inmersiva y rica en escritorio.
+  - 📱 **App Móvil:** Una aplicación nativa rápida y fluida.
+- **Escalabilidad Cloud:** Infraestructura 100% en la nube para crecer sin límites.
 - **Experiencia Premium:** Enfoque en performance y diseño visual.
 
 ---
@@ -64,7 +66,7 @@ graph TD
 
 ---
 
-## 🏗️ Tech Stack (Las Herramientas del Poder)
+## 🏗️ Tech Stack
 
 Hemos seleccionado las mejores tecnologías modernas para cada capa de la aplicación:
 
@@ -73,11 +75,11 @@ Hemos seleccionado las mejores tecnologías modernas para cada capa de la aplica
 *   **TypeORM**: Para una gestión de datos elegante y tipada.
 
 ### 💾 Datos & Almacenamiento
-*   **Neon (PostgreSQL Serverless)**: Base de datos principal auto-escalable.
-*   **AWS S3 (Planned)**: Almacenamiento de fotos, videos y assets.
+*   **Neon (PostgreSQL Serverless)**: Base de datos principal. Nos permite escalar a cero y manejar picos de tráfico.
+*   **AWS S3 (Planned)**: Almacenamiento de objetos robusto para gestionar multimedia.
 
 ### 🛡️ Seguridad
-*   **JWT & Passport**: Autenticación segura sin estado (Stateless).
+*   **JWT & Passport**: Estándar de la industria para autenticación.
 
 ---
 
@@ -87,9 +89,10 @@ Hemos seleccionado las mejores tecnologías modernas para cada capa de la aplica
 *Enero 2026*
 
 Hemos establecido los cimientos inmutables del proyecto.
-- **Core Framework**: Inicialización con NestJS.
-- **Base de Datos Cloud**: Aprovisionamiento en **Neon Tech**.
-- **Configuración**: Manejo seguro de variables (`.env`) y conexión SSL.
+- **Core Framework**: Inicialización del proyecto con NestJS.
+- **Base de Datos Cloud**: Aprovisionamiento de base de datos PostgreSQL en **Neon Tech**.
+- **Gestión de Configuración**: Implementación de `@nestjs/config`.
+- **Validación**: Conexión exitosa verificada.
 
 ---
 
@@ -101,30 +104,45 @@ Hemos establecido los cimientos inmutables del proyecto.
 
 ### 🗓️ FASE 3: Media & AWS
 - Integración con AWS SDK.
-- Servicio de subida de avatares y fotos.
-
-### 🗓️ FASE 4: Core Social
-- Feed, Comentarios, Likes y Seguidores.
+- Servicio de subida de avatares.
 
 ---
 
-## 🛠️ Instalación y Ejecución
+## 🛠️ Guía de Replicación (Setup)
 
-1. **Instalar dependencias:**
-   ```bash
-   npm install
-   ```
+Si deseas levantar este proyecto en tu máquina local, sigue estos pasos:
 
-2. **Configurar Entorno (.env):**
-   ```ini
-   DATABASE_URL="postgresql://user:pass@endpoint.neon.tech/neondb?sslmode=require"
-   PORT=3000
-   ```
+### 1. Clonar y Preparar
+```bash
+git clone https://github.com/marceloemmott-dev/mired-social-backend.git
+cd mired-social-backend
+npm install
+```
 
-3. **Ejecutar en Desarrollo:**
-   ```bash
-   npm run start:dev
-   ```
+### 2. Configurar Base de Datos (Neon)
+Este proyecto requiere una base de datos PostgreSQL. Recomendamos usar **Neon** por su facilidad y capa gratuita.
+
+1.  Ve a [neon.tech](https://neon.tech) y regístrate.
+2.  Crea un nuevo proyecto.
+3.  En el Dashboard, copia la **Connection String** (asegúrate de que tenga `sslmode=require`).
+
+### 3. Variables de Entorno
+Crea un archivo `.env` en la raíz del proyecto (basado en el `.env.example` incluido):
+
+```bash
+cp .env.example .env
+```
+
+Abre el `.env` y pega tu conexión de Neon:
+```ini
+DATABASE_URL="postgresql://tu_usuario:password@ep-cool.aws.neon.tech/neondb?sslmode=require"
+```
+
+### 4. Ejecutar
+```bash
+npm run start:dev
+```
+¡Listo! El backend estará corriendo en `http://localhost:3000`.
 
 ---
 **Creado por Marcelo** 🚀
