@@ -99,8 +99,9 @@ Hemos establecido los cimientos inmutables del proyecto.
 ## 🔮 Roadmap (Próximos Pasos)
 
 ### 🔜 FASE 2: Identidad y Acceso (En Progreso)
-- Diseño de la Entidad `User`.
-- Sistema de Registro e Inicio de Sesión seguro.
+- [x] Diseño de la Entidad `User`.
+- [x] Sistema de Registro (Sign Up) con Hash de Contraseña.
+- [ ] Inicio de Sesión (Login) y JWT.
 
 ### 🗓️ FASE 3: Media & AWS
 - Integración con AWS SDK.
